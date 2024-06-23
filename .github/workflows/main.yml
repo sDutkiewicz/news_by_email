@@ -2,8 +2,8 @@ name: Send News Email
 
 on:
   schedule:
-    - cron: '0 19 * * *'  # Runs at 21:00 CEST (19:00 UTC) every day
-  workflow_dispatch:  # Allows manual triggering of the workflow
+    - cron: '0 19 * * *' # Runs at 21:00 CEST (19:00 UTC) every day
+  workflow_dispatch: # Allows manual triggering of the workflow
 
 jobs:
   send_email:
@@ -23,10 +23,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Run Python script
+    - name: Run the email script
+      run: python main.py
       env:
         EMAIL_USER: ${{ secrets.EMAIL_USER }}
         EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
         RECIPIENT_EMAILS: ${{ secrets.RECIPIENT_EMAILS }}
-      run: |
-        python main.py
