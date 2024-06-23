@@ -62,15 +62,8 @@ Before you begin, ensure you have met the following requirements:
      - `RECIPIENT_EMAILS`: Comma-separated list of recipient emails.
 
 ## Usage
-
-1. **Local Testing**:
-
-    You can test the script locally before deploying it to GitHub Actions:
-    ```bash
-    python test.py
-    ```
-
-2. **Deploy to GitHub Actions**:
+    
+**Deploy to GitHub Actions**:
 
     - Commit and push your changes to the GitHub repository:
       ```bash
@@ -93,7 +86,6 @@ news_by_email/
 ├── fetch.py               # Web scraping utility
 ├── main.py                # Main script for GitHub Actions
 ├── requirements.txt       # Python dependencies
-└── test.py                # Local testing script
 ```
 
 ## Contributing
