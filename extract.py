@@ -1,12 +1,7 @@
 from parse import fetch_and_parse
 
-def extract_info(soup, section_selector, item_selector, title_selector, exclude_domain=None):
-    section = soup.select_one(section_selector)
-    if not section:
-        print(f"Section {section_selector} not found")
-        return []
-
-    items = section.select(item_selector)
+def extract_info(soup, section_class, link_class, title_class, exclude_domain=None):
+    items = soup.select(f"{section_class} {link_class}")
     articles = []
 
     for item in items:
@@ -14,20 +9,14 @@ def extract_info(soup, section_selector, item_selector, title_selector, exclude_
         if exclude_domain and exclude_domain in link:
             continue
 
-        title_tag = item.select_one(title_selector)
-        title = title_tag.get_text(strip=True) if title_tag else "No title available"
+        title = item.select_one(title_class).get_text(strip=True)
         linked_soup = fetch_and_parse(link)
-        
         lead_div = linked_soup.find('div', class_='hyphenate lead')
         main_photo = linked_soup.find('figure', class_='mainPhoto')
         
         lead_text = lead_div.get_text(strip=True) if lead_div else "No description available"
-        img_tag = main_photo.find('img') if main_photo else None
-        img_src = img_tag['src'] if img_tag else None
-        img_alt = img_tag.get('alt', 'No description available') if img_tag else "No description available"
-
-        if img_src and img_src.startswith('//'):
-            img_src = 'https:' + img_src
+        img_src = main_photo.find('img')['src'] if main_photo and main_photo.find('img') else None
+        img_alt = main_photo.find('img').get('alt', 'No description available') if img_src else "No description available"
 
         articles.append({
             'title': title,
@@ -37,6 +26,4 @@ def extract_info(soup, section_selector, item_selector, title_selector, exclude_
             'link': link
         })
 
-        print(articles)
-    
     return articles

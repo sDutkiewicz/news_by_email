@@ -20,13 +20,13 @@ def job():
     email_content = create_email_content(popular_news, newest_news)
 
     # Email settings
-    sender_email = os.getenv('EMAIL')
-    sender_password = os.getenv('EMAIL_PASSWORD')
-    recipient_email = os.getenv('RECIPIENT_EMAIL')
+    sender_email = os.getenv('EMAIL_USER')
+    sender_password = os.getenv('EMAIL_PASS')
+    recipient_emails = os.getenv('RECIPIENT_EMAILS').split(',')
 
     # Create and send email
-    msg = create_email_message(email_content, popular_news, newest_news, sender_email, recipient_email)
-    send_email(msg, sender_email, sender_password, recipient_email)
+    msg = create_email_message(email_content, popular_news, newest_news, sender_email, recipient_emails)
+    send_email(msg, sender_email, sender_password, recipient_emails)
 
 if __name__ == "__main__":
     job()
