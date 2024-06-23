@@ -1,6 +1,5 @@
 import os
-from parse import fetch_and_parse
-from extract import extract_info
+from extract import extract_info, fetch_and_parse
 from email_content import create_email_content, create_email_message
 from send_email import send_email
 
