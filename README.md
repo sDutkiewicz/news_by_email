@@ -42,17 +42,7 @@ Before you begin, ensure you have met the following requirements:
     pip install -r requirements.txt
     ```
 
-3. **Set Up Environment Variables**:
-
-    - Create a `.env` file in the project root directory.
-    - Add your email credentials and recipient emails:
-      ```ini
-      EMAIL_USER=your_email@gmail.com
-      EMAIL_PASS=your_email_password
-      RECIPIENT_EMAILS=email1@example.com,email2@example.com
-      ```
-
-4. **Set Up GitHub Secrets**:
+3. **Set Up GitHub Secrets**:
    
    - Go to your GitHub repository.
    - Navigate to `Settings > Secrets and variables > Actions`.
