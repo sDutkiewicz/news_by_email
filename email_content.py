@@ -59,7 +59,7 @@ def create_email_message(email_content, popular_news, newest_news, sender_email,
     msg = MIMEMultipart('alternative')
     msg['Subject'] = "Today's Top News"
     msg['From'] = sender_email
-    msg['To'] = ", ".join(recipient_emails.split(','))
+    msg['To'] = ", ".join(recipient_emails)  # Join the list items directly
 
     part = MIMEText(email_content, 'html')
     msg.attach(part)
@@ -73,6 +73,7 @@ def create_email_message(email_content, popular_news, newest_news, sender_email,
             msg.attach(image)
 
     return msg
+
 
 def send_email(msg, sender_email, sender_password, recipient_emails):
     with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
