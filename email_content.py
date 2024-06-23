@@ -1,16 +1,15 @@
-import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 from io import BytesIO
 import requests
 
-def download_image(url):
-    if not url.startswith(('http://', 'https://')):
-        url = 'https:' + url
+def download_image(url, name):
     response = requests.get(url)
     response.raise_for_status()
-    return response.content
+    img_data = BytesIO(response.content).read()
+    img_name = name.split('/')[-1]
+    return img_data, img_name
 
 def create_email_content(popular_news, newest_news):
     email_content = """
@@ -20,13 +19,12 @@ def create_email_content(popular_news, newest_news):
             <h2>Popular News</h2>
             <ul>
     """
-
     for article in popular_news:
         email_content += f"""
             <li>
                 <h3>{article['title']}</h3>
                 <p>{article['lead']}</p>
-                <img src="cid:{article['img_src'].split('/')[-1]}" alt="{article['img_alt']}" width="300"><br>
+                <img src="cid:{article['img_name']}" alt="{article['img_alt']}" width="300"><br>
                 <a href="{article['link']}">Read more</a>
             </li>
         """
@@ -42,11 +40,11 @@ def create_email_content(popular_news, newest_news):
             <li>
                 <h3>{article['title']}</h3>
                 <p>{article['lead']}</p>
-                <img src="cid:{article['img_src'].split('/')[-1]}" alt="{article['img_alt']}" width="300"><br>
+                <img src="cid:{article['img_name']}" alt="{article['img_alt']}" width="300"><br>
                 <a href="{article['link']}">Read more</a>
             </li>
         """
-
+    
     email_content += """
             </ul>
         </body>
@@ -56,27 +54,22 @@ def create_email_content(popular_news, newest_news):
     return email_content
 
 def create_email_message(email_content, popular_news, newest_news, sender_email, recipient_emails):
-    msg = MIMEMultipart('alternative')
+    msg = MIMEMultipart('related')
     msg['Subject'] = "Today's Top News"
     msg['From'] = sender_email
-    msg['To'] = ", ".join(recipient_emails)  # Join the list items directly
+    msg['To'] = ", ".join(recipient_emails)
 
+    alternative_part = MIMEMultipart('alternative')
     part = MIMEText(email_content, 'html')
-    msg.attach(part)
+    alternative_part.attach(part)
+    msg.attach(alternative_part)
 
-    # Attach images
     for article in popular_news + newest_news:
         if article['img_src']:
-            img_data = download_image(article['img_src'])
+            img_data, img_name = download_image(article['img_src'], article['img_name'])
             image = MIMEImage(img_data)
-            image.add_header('Content-ID', f"<{article['img_src'].split('/')[-1]}>")
+            image.add_header('Content-ID', f"<{img_name}>")
+            image.add_header('Content-Disposition', 'inline', filename=img_name)
             msg.attach(image)
 
     return msg
-
-
-def send_email(msg, sender_email, sender_password, recipient_emails):
-    with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
-        smtp.starttls()
-        smtp.login(sender_email, sender_password)
-        smtp.sendmail(sender_email, recipient_emails.split(','), msg.as_string())
