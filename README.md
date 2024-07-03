@@ -21,6 +21,9 @@ Welcome to the **Daily News Email Automation** project! This repository hosts a 
 - 🕒 **Automated Schedule**: Uses GitHub Actions to schedule the email dispatch at 21:00 CEST every day.
 - 📸 **Embedded Images**: Ensures images in the articles are embedded and displayed correctly in the email.
 
+## Screenshot
+![alttext](gallery/image.png)
+
 ## Prerequisites
 
 Before you begin, ensure you have met the following requirements:
