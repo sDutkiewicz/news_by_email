@@ -34,18 +34,22 @@ Before you begin, ensure you have met the following requirements:
 
 ## Installation
 
-1. **Clone the Repository**:
+1. **Fork the Repository**:
+
+First, fork the repository to your GitHub account by clicking the "Fork" button on the repository page
+
+2. **Clone the Repository**:
     ```bash
     git clone https://github.com/your-username/news_by_email.git
     cd news_by_email
     ```
 
-2. **Install Dependencies**:
+3. **Install Dependencies**:
     ```bash
     pip install -r requirements.txt
     ```
 
-3. **Set Up GitHub Secrets**:
+4. **Set Up GitHub Secrets**:
    
    - Go to your GitHub repository.
    - Navigate to `Settings > Secrets and variables > Actions`.
