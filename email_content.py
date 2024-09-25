@@ -4,13 +4,28 @@ from email.mime.image import MIMEImage
 from io import BytesIO
 import requests
 from mimetypes import guess_type
+from requests.exceptions import RequestException
 
 def download_image(url, name):
-    response = requests.get(url)
-    response.raise_for_status()
-    img_data = BytesIO(response.content).read()
-    img_name = name.split('/')[-1]
-    return img_data, img_name
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        img_data = response.content
+        
+        # Attempt to get MIME type from response headers
+        content_type = response.headers.get('Content-Type')
+        if not content_type:
+            # Fall back to guessing from file extension
+            mime_type, encoding = guess_type(name)
+            content_type = mime_type or 'application/octet-stream'
+        
+        img_name = name.split('/')[-1]
+        img_extension = content_type.split('/')[-1]
+
+        return img_data, img_name, img_extension
+    except RequestException as e:
+        print(f"Error downloading image from {url}: {e}")
+        return None, None, None
 
 def create_email_content(popular_news, newest_news):
     email_content = """
@@ -67,16 +82,15 @@ def create_email_message(email_content, popular_news, newest_news, sender_email,
 
     for article in popular_news + newest_news:
         if article['img_src']:
-            img_data, img_name = download_image(article['img_src'], article['img_name'])
+            img_data, img_name, img_extension = download_image(article['img_src'], article['img_name'])
             
-            # Get MIME type from file extension or response content-type
-            mime_type, encoding = guess_type(article['img_name'])
-            if mime_type is None:
-                mime_type = 'application/octet-stream'  # Fallback if MIME type cannot be guessed
-            
-            image = MIMEImage(img_data, _subtype=mime_type.split('/')[1])
-            image.add_header('Content-ID', f"<{img_name}>")
-            image.add_header('Content-Disposition', 'inline', filename=img_name)
-            msg.attach(image)
+            if img_data:
+                # Create MIMEImage with the correct image type
+                image = MIMEImage(img_data, _subtype=img_extension)
+                image.add_header('Content-ID', f"<{img_name}>")
+                image.add_header('Content-Disposition', 'inline', filename=img_name)
+                msg.attach(image)
+            else:
+                print(f"Skipping image for {article['title']} due to download issues.")
 
     return msg
