@@ -67,7 +67,13 @@ def create_email_message(email_content, popular_news, newest_news, sender_email,
     for article in popular_news + newest_news:
         if article['img_src']:
             img_data, img_name = download_image(article['img_src'], article['img_name'])
-            image = MIMEImage(img_data)
+            
+            # Get MIME type from file extension or response content-type
+            mime_type, encoding = guess_type(article['img_name'])
+            if mime_type is None:
+                mime_type = 'application/octet-stream'  # Fallback if MIME type cannot be guessed
+            
+            image = MIMEImage(img_data, _subtype=mime_type.split('/')[1])
             image.add_header('Content-ID', f"<{img_name}>")
             image.add_header('Content-Disposition', 'inline', filename=img_name)
             msg.attach(image)
