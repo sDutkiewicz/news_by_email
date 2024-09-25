@@ -3,6 +3,7 @@ from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 from io import BytesIO
 import requests
+from mimetypes import guess_type
 
 def download_image(url, name):
     response = requests.get(url)
