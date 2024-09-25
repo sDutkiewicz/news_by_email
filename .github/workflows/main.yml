@@ -2,7 +2,7 @@ name: Send News Email
 
 on:
   schedule:
-    - cron: '0 19 * * *' # Runs at 21:00 CEST (19:00 UTC) every day
+    - cron: '47 18 * * *' # Runs at 20:47 CEST (18:47 UTC) every day
   workflow_dispatch: # Allows manual triggering of the workflow
 
 jobs:
